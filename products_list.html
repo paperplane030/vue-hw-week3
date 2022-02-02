@@ -250,7 +250,12 @@
               >
                 新增產品
               </button>
-              <button type="button" class="btn btn-primary" v-else>
+              <button
+                type="button"
+                class="btn btn-primary"
+                @click="editProduct"
+                v-else
+              >
                 編輯產品
               </button>
             </div>

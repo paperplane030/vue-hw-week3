@@ -99,6 +99,25 @@ createApp({
       this.product_temp.data = item
       this.productModal.show()
     },
+    editProduct() {
+      axios
+        .put(
+          `${this.url}/api/${this.path}/admin/product/${this.product_temp.data.id}`,
+          {
+            data: this.product_temp.data,
+          }
+        )
+        // 成功
+        .then((res) => {
+          this.getData()
+          this.productModal.hide()
+        })
+        // 失敗
+        .catch((error) => {
+          alert('編輯商品失敗，請重新操作')
+          this.productModal.hide()
+        })
+    },
     toastOpen() {
       this.toast.text = '登入資訊驗證錯誤，將回到登入頁面...'
       this.toast.show()

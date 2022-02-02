@@ -27,7 +27,7 @@ createApp({
           this.toastText = '登入成功，即將轉入後台...'
           toast.show()
           setTimeout(() => {
-            window.location = 'products.html'
+            window.location = 'products_list.html'
           }, 3000)
         })
         // 失敗
