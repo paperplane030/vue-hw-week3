@@ -27,8 +27,8 @@
               <th>產品名稱</th>
               <th class="text-center" width="120">原價</th>
               <th class="text-center" width="120">售價</th>
-              <th width="100">是否啟用</th>
-              <th width="120">編輯</th>
+              <th width="100">商品狀態</th>
+              <th width="200">編輯</th>
             </tr>
           </thead>
           <tbody>
@@ -38,8 +38,8 @@
               <td class="text-end">{{ item.origin_price }}</td>
               <td class="text-end">{{ item.price }}</td>
               <td>
-                <span class="text-success" v-if="item.is_enabled">啟用</span>
-                <span class="text-danger" v-else>未啟用</span>
+                <span class="text-success" v-if="item.is_enabled">上架</span>
+                <span class="text-danger" v-else>下架</span>
               </td>
               <td>
                 <div class="btn-group">
@@ -50,7 +50,27 @@
                   >
                     編輯
                   </button>
-                  <button type="button" class="btn btn-outline-danger btn-sm">
+                  <button
+                    type="button"
+                    class="btn btn-outline-success btn-sm"
+                    v-if="item.is_enabled !== 1"
+                    @click="productStatus(1,item)"
+                  >
+                    上架
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-danger btn-sm"
+                    v-else
+                    @click="productStatus(0,item)"
+                  >
+                    下架
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-danger btn-sm"
+                    @click="openDelProductModal(item)"
+                  >
                     刪除
                   </button>
                 </div>
@@ -105,12 +125,12 @@
                   <div class="mb-2">
                     <div class="mb-3">
                       <label for="imageUrl" class="form-label"
-                        >輸入圖片網址</label
+                        >輸入主圖片網址</label
                       >
                       <input
                         type="text"
                         class="form-control"
-                        placeholder="請輸入圖片連結"
+                        placeholder="請輸入主圖片連結"
                         v-model="product_temp.data.imageUrl"
                       />
                     </div>
@@ -120,16 +140,45 @@
                       alt=""
                     />
                   </div>
+                  <template
+                    v-for="(image,index) in product_temp.data.imagesUrl"
+                    :key="'image'+index"
+                  >
+                    <div class="mb-3">
+                      <label for="imagesUrl" class="form-label"
+                        >輸入副圖片網址</label
+                      >
+                      <div class="row align-items-center">
+                        <div class="col-10">
+                          <input
+                            type="text"
+                            class="form-control mr-3"
+                            placeholder="請輸入副圖片連結"
+                            v-model="product_temp.data.imagesUrl[index]"
+                          />
+                        </div>
+                        <div class="col-2">
+                          <button
+                            type="button"
+                            class="btn-close"
+                            aria-label="Close"
+                            @click="delImages(index)"
+                          ></button>
+                        </div>
+                      </div>
+                    </div>
+                    <img
+                      class="img-fluid mb-2"
+                      :src="product_temp.data.imagesUrl[index]"
+                      alt=""
+                    />
+                  </template>
                   <div>
                     <button
-                      class="btn btn-outline-primary btn-sm d-block w-100"
+                      class="btn btn-outline-primary btn-sm d-block w-100 mb-2"
+                      @click="product_temp.data.imagesUrl.push('')"
                     >
-                      新增圖片
-                    </button>
-                  </div>
-                  <div v-else>
-                    <button class="btn btn-outline-danger btn-sm d-block w-100">
-                      刪除圖片
+                      新增副圖片
                     </button>
                   </div>
                 </div>
@@ -227,7 +276,7 @@
                         v-model="product_temp.data.is_enabled"
                       />
                       <label class="form-check-label" for="is_enabled"
-                        >是否啟用</label
+                        >是否上架</label
                       >
                     </div>
                   </div>
@@ -285,7 +334,8 @@
             </div>
             <div class="modal-body">
               是否刪除
-              <strong class="text-danger"></strong> 商品(刪除後將無法恢復)。
+              <strong class="text-danger">{{ product_temp.data.title }}</strong>
+              商品(刪除後將無法恢復)。
             </div>
             <div class="modal-footer">
               <button
@@ -295,7 +345,9 @@
               >
                 取消
               </button>
-              <button type="button" class="btn btn-danger">確認刪除</button>
+              <button type="button" class="btn btn-danger" @click="delProduct">
+                確認刪除
+              </button>
             </div>
           </div>
         </div>

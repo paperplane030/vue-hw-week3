@@ -23,6 +23,7 @@ createApp({
       },
       isReady: false,
       productModal: {},
+      delProductModal: {},
       toast: {
         instance: {},
         text: '',
@@ -36,6 +37,9 @@ createApp({
     // 定義 modal
     this.productModal = new bootstrap.Modal(
       document.querySelector('#productModal')
+    )
+    this.delProductModal = new bootstrap.Modal(
+      document.querySelector('#delProductModal')
     )
   },
   methods: {
@@ -116,6 +120,45 @@ createApp({
         .catch((error) => {
           alert('編輯商品失敗，請重新操作')
           this.productModal.hide()
+        })
+    },
+    openDelProductModal(item) {
+      this.delProductModal.show()
+      this.product_temp.data = item
+    },
+    delProduct() {
+      axios
+        .delete(
+          `${this.url}/api/${this.path}/admin/product/${this.product_temp.data.id}`
+        )
+        // 成功
+        .then((res) => {
+          this.getData()
+          this.delProductModal.hide()
+        })
+        // 失敗
+        .catch((error) => {
+          alert('刪除商品失敗，請重新操作')
+          this.delProductModal.hide()
+        })
+    },
+    delImages(index) {
+      this.product_temp.data.imagesUrl.splice(index, 1)
+    },
+    productStatus(status, item) {
+      const temp = JSON.parse(JSON.stringify(item))
+      temp.is_enabled = status
+      axios
+        .put(`${this.url}/api/${this.path}/admin/product/${temp.id}`, {
+          data: temp,
+        })
+        // 成功
+        .then((res) => {
+          this.getData()
+        })
+        // 失敗
+        .catch((error) => {
+          alert('編輯商品失敗，請重新操作')
         })
     },
     toastOpen() {
