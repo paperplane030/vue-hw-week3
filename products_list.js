@@ -79,7 +79,21 @@ createApp({
         })
     },
     addProductModal() {
-      this.product_temp.edit = false
+      this.product_temp = {
+        edit: false,
+        data: {
+          title: '',
+          category: '',
+          origin_price: 0,
+          price: 0,
+          unit: '',
+          description: '',
+          content: '',
+          is_enabled: 0,
+          imageUrl: '',
+          imagesUrl: [],
+        },
+      }
       this.productModal.show()
     },
     addProduct() {
@@ -94,13 +108,12 @@ createApp({
         })
         // 失敗
         .catch((error) => {
-          alert('新增商品失敗，請重新操作')
-          this.productModal.hide()
+          alert(error.data.message)
         })
     },
     editProductModal(item) {
       this.product_temp.edit = true
-      this.product_temp.data = item
+      this.product_temp.data = JSON.parse(JSON.stringify(item))
       this.productModal.show()
     },
     editProduct() {
@@ -118,8 +131,7 @@ createApp({
         })
         // 失敗
         .catch((error) => {
-          alert('編輯商品失敗，請重新操作')
-          this.productModal.hide()
+          alert(error.data.message)
         })
     },
     openDelProductModal(item) {
